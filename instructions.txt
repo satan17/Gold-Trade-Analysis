@@ -1,0 +1,2 @@
+# install git v2.49.0
+# winget install --id Git.Git -e --source winget
