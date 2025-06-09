@@ -29,8 +29,8 @@ export_types = 'x,dx,rx,xip,xop' # all kind of exports
 
 def get_export_data(country_code, country_name):
     try:
-        if os.path.exists(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.xlsx')):
-            df = pd.read_excel(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.xlsx'))
+        if os.path.exists(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv')):
+            df = pd.read_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv'))
             print('found local data for ', country_name)
         else:
             df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
@@ -38,9 +38,8 @@ def get_export_data(country_code, country_name):
                                            flowCode=export_types, partnerCode=country_code, partner2Code=0,
                                            customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
                                            aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
-
             # saving file on disk to avoid repeated calls
-            df.to_excel(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.xlsx'), index=False)
+            df.to_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv'), index=False)
             print('fetched data from API for ', country_name)
         return df
     except Exception as e:
@@ -60,18 +59,18 @@ def get_export_data(country_code, country_name):
 
 def get_import_data(country_code, country_name):
     try:
-        if os.path.exists(Path(Constants.DATASET_DIR) /Path(str(country_name) + '_import_comtrade' + '.xlsx')):
-            df = pd.read_excel(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.xlsx'))
+        if os.path.exists(Path(Constants.DATASET_DIR) /Path(str(country_name) + '_import_comtrade' + '.csv')):
+            df = pd.read_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.csv'))
             print('found local data for ', country_name)
         else:
+            
             df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
                                               period=time_period, reporterCode='', cmdCode=commodity_codes,
                                               flowCode=import_types, partnerCode=country_code, partner2Code=0,
                                               customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
                                               aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
-
             # saving file on disk to avoid repeated calls
-            df.to_excel(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.xlsx', index=False))
+            df.to_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.csv'), index=False)
             print('fetched data from API for ', country_name)
         return df
     except Exception as e:
