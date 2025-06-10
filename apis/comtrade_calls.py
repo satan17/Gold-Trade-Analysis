@@ -29,22 +29,41 @@ export_types = 'x,dx,rx,xip,xop' # all kind of exports
 
 def get_export_data(country_code, country_name):
     try:
-        if os.path.exists(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv')):
-            df = pd.read_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv'))
-            print('found local data for ', country_name)
-        else:
-            df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
-                                           period=time_period, reporterCode='', cmdCode=commodity_codes,
-                                           flowCode=export_types, partnerCode=country_code, partner2Code=0,
-                                           customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
-                                           aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
-            # saving file on disk to avoid repeated calls
-            df.to_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_export_comtrade' + '.csv'), index=False)
-            print('fetched data from API for ', country_name)
+        file_path = Path(Constants.DATASET_DIR) / Path(f"{country_name}_export_comtrade.xlsx")
+        
+        if file_path.exists():
+            try:
+                df = pd.read_excel(file_path)
+                print(f'Found local data for {country_name}')
+                return df
+            except Exception as e:
+                logging.error(f"Error reading existing file for {country_name}: {str(e)}")
+                print(f"Error reading existing file for {country_name}, fetching from API instead")
+        
+        # If file doesn't exist or there was an error reading it, fetch from API
+        df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
+                                       period=time_period, reporterCode='', cmdCode=commodity_codes,
+                                       flowCode=export_types, partnerCode=country_code, partner2Code=0,
+                                       customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
+                                       aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
+        
+        # Ensure the dataset directory exists
+        Constants.DATASET_DIR.mkdir(exist_ok=True)
+        
+        # Save the file
+        try:
+            df.to_excel(file_path, index=False)
+            print(f'Successfully saved data for {country_name}')
+        except Exception as e:
+            logging.error(f"Error saving file for {country_name}: {str(e)}")
+            print(f"Error saving file for {country_name}: {str(e)}")
+        
         return df
+        
     except Exception as e:
-        logging.exception("Error in function : get_export_data")
-        # print('some internal error occurred')
+        logging.exception(f"Error in get_export_data for {country_name}: {str(e)}")
+        print(f'Error occurred while processing {country_name}: {str(e)}')
+        return None
 
 
 '''
@@ -59,21 +78,39 @@ def get_export_data(country_code, country_name):
 
 def get_import_data(country_code, country_name):
     try:
-        if os.path.exists(Path(Constants.DATASET_DIR) /Path(str(country_name) + '_import_comtrade' + '.csv')):
-            df = pd.read_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.csv'))
-            print('found local data for ', country_name)
-        else:
-            
-            df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
-                                              period=time_period, reporterCode='', cmdCode=commodity_codes,
-                                              flowCode=import_types, partnerCode=country_code, partner2Code=0,
-                                              customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
-                                              aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
-            # saving file on disk to avoid repeated calls
-            df.to_csv(Path(Constants.DATASET_DIR) / Path(str(country_name) + '_import_comtrade' + '.csv'), index=False)
-            print('fetched data from API for ', country_name)
+        file_path = Path(Constants.DATASET_DIR) / Path(f"{country_name}_import_comtrade.xlsx")
+        
+        if file_path.exists():
+            try:
+                df = pd.read_excel(file_path)
+                print(f'Found local data for {country_name}')
+                return df
+            except Exception as e:
+                logging.error(f"Error reading existing file for {country_name}: {str(e)}")
+                print(f"Error reading existing file for {country_name}, fetching from API instead")
+        
+        # If file doesn't exist or there was an error reading it, fetch from API
+        df = comtradeapicall.getFinalData(subscription_key=subscription_key, typeCode='C', freqCode='A', clCode='HS',
+                                       period=time_period, reporterCode='', cmdCode=commodity_codes,
+                                       flowCode=import_types, partnerCode=country_code, partner2Code=0,
+                                       customsCode=None, motCode=None, maxRecords=50000, format_output='JSON',
+                                       aggregateBy=None, breakdownMode='plus', countOnly=None, includeDesc=True)
+        
+        # Ensure the dataset directory exists
+        Constants.DATASET_DIR.mkdir(exist_ok=True)
+        
+        # Save the file
+        try:
+            df.to_excel(file_path, index=False)
+            print(f'Successfully saved data for {country_name}')
+        except Exception as e:
+            logging.error(f"Error saving file for {country_name}: {str(e)}")
+            print(f"Error saving file for {country_name}: {str(e)}")
+        
         return df
+        
     except Exception as e:
-        logging.exception("Error in function : get_import_data")
-        # print('some internal error occurred')
+        logging.exception(f"Error in get_import_data for {country_name}: {str(e)}")
+        print(f'Error occurred while processing {country_name}: {str(e)}')
+        return None
 
