@@ -48,9 +48,9 @@ pip install -r requirements.txt
 
 ## Data Sources
 - Gold price data: [Yahoo Finance](https://finance.yahoo.com/quote/GC=F/)
-- Economic indicators: [FRED](https://fred.stlouisfed.org/)
-- Central bank data: [World Gold Council](https://www.gold.org/)
 - Geopolitical events: Various financial news sources
+- Historical Gold Demand & Supply: World Gold Council (WGC) <!--- https://www.gold.org/goldhub/data/gold-demand-by-country -->
+- Gold ETFs, holdings and flows: World Gold Council (WGC) <!--- https://www.gold.org/goldhub/data/gold-etfs-holdings-and-flows -->
 
 ## Project Structure
 ```
